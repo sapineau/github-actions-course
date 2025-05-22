@@ -1,7 +1,7 @@
 name: 01 - Building Blocks
 
 on:
-  push:
+  #push: #I don't want to polute actions with this file!
   workflow_dispatch:
 
 jobs:
