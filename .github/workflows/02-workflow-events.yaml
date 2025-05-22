@@ -3,8 +3,8 @@ name: 02 - Workflow Events
 on:
   # push:
   # pull_request:
-  schedule:
-    - cron: '*/15 * * * *' # Every 15 minute. To comment as soon as possible.
+  #schedule:
+  #  - cron: '*/15 * * * *' # Every 15 minute. To comment as soon as possible.
   workflow_dispatch:
 
 jobs:
