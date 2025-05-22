@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
   schedule:
-    - cron: "*/5 * * * *" # Every 5 minutes. To comment as soon as possible.
+    - cron: '*/1 * * * *' # Every minute. To comment as soon as possible.
   workflow_dispatch:
 
 jobs:
