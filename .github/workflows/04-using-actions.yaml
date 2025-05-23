@@ -12,12 +12,15 @@ jobs:
 
         - name: Printing Folders
           run: |
+            echo "go to 04-using-actions/react-app"
+            cd 04-using-actions/react-app
+
             ls -la
 
             echo ""
             echo "public folder content"
             ls -laR public/
-            
+
             echo ""
             echo "src folder content"
             ls -laR src/
