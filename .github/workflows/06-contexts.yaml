@@ -3,9 +3,14 @@ name: 06 - Contexts
 on:
   push:
   workflow_dispatch:
+    inputs:
+      debug:
+        type: boolean
+        required: false
+        default: false
 
 # The run-name allows you to define the name of the workflow run that appears on the UI.
-run-name: My custom workflow run name - ${{ runner.os }}
+run-name: 06 - Contexts | DEBUG - ${{ inputs.debug }}
 
 jobs:
   echo-data:
