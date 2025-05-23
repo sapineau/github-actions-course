@@ -1,13 +1,13 @@
 name: 06 - Contexts
 
 on:
-  push:
+  #push:
   workflow_dispatch:
-    inputs:
-      debug:
-        type: boolean
-        required: false
-        default: false
+    # inputs:
+    #   debug:
+    #     type: boolean
+    #     required: false
+    #     default: false
 
 env:
   MY_WORKFLOW_VAR: 'workflow'
