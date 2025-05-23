@@ -10,11 +10,14 @@ jobs:
         - name: Checkout Code
           uses: actions/checkout@v4
 
-        - name: Printing Folders
+        - name: Setup Node
+          working-directory: 04-using-actions/react-app
           run: |
-            echo "go to 04-using-actions/react-app"
-            cd 04-using-actions/react-app
+            npm ci
 
+        - name: Printing Folders
+          working-directory: 04-using-actions/react-app
+          run: |
             ls -la
 
             echo ""
