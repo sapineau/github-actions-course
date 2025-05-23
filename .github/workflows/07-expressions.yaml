@@ -3,17 +3,18 @@ name: 07 - Using Expressions
 on:
   push:
   workflow_dispatch:
-      inputs:
-        debug:
-          type: boolean
-          default: false
+    inputs:
+      debug:
+        description: "debug"
+        type: boolean
+        default: false
 
 jobs:
   echo:
     runs-on: ubuntu-latest
     steps:
 
-      - if: ${{ inputs.debug }} == true
+      - if: ${{ inputs.debug == true }}
         name: "[debug] Print start-up data"
         run: |
           echo "Triggered by: ${{ github.event_name }}"
@@ -21,7 +22,7 @@ jobs:
           echo "Commit SHA: ${{ github.sha }}"
           echo "Runner OS: ${{ runner.os }}"
 
-      - if: ${{ inputs.debug }} == true && ${{ github.ref_name }} == "main"
+      - if: ${{ inputs.debug == true && github.ref_name == 'main' }} 
         name: "[debug] Print when triggered from main"
         run: |
           echo "I was triggered from main"
