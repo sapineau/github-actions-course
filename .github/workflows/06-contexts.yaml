@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+# The run-name allows you to define the name of the workflow run that appears on the UI.
+run-name: My custom workflow run name - ${{ runner.os }}
+
 jobs:
   echo-data:
     runs-on: ubuntu-latest
@@ -23,4 +26,5 @@ jobs:
 
       - name: "Retrieve Variable"
         run: |
+          #I need to create a variable "MY_VAR" in ".settings/secrets/actions" as https://github.com/sapineau/github-actions-course/settings/secrets/actions
           echo "My repository variable: ${{ vars.MY_VAR }}"
