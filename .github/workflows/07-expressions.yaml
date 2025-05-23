@@ -9,11 +9,15 @@ on:
         type: boolean
         default: false
 
+# Ternary expression (Typescript)
+run-name: 07 - Using Expressions | DEBUG - ${{ inputs.debug == true && 'ON' || 'OFF' }}
+
 jobs:
   echo:
     runs-on: ubuntu-latest
     steps:
 
+      # If need to be encapsulate
       - if: ${{ inputs.debug == true }}
         name: "[debug] Print start-up data"
         run: |
@@ -22,6 +26,7 @@ jobs:
           echo "Commit SHA: ${{ github.sha }}"
           echo "Runner OS: ${{ runner.os }}"
 
+      # If need to be encapsulate and string need to be with simple quote
       - if: ${{ inputs.debug == true && github.ref_name == 'main' }} 
         name: "[debug] Print when triggered from main"
         run: |
