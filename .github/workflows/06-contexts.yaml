@@ -9,12 +9,19 @@ on:
         required: false
         default: false
 
+env:
+  MY_WORKFLOW_VAR: 'workflow'
+  MY_OVERWRITTEN_VAR: 'workflow'
+
 # The run-name allows you to define the name of the workflow run that appears on the UI.
 run-name: 06 - Contexts | DEBUG - ${{ inputs.debug }}
 
 jobs:
   echo-data:
     runs-on: ubuntu-latest
+    env:
+      MY_JOB_VAR: 'job'
+      MY_OVERWRITTEN_VAR: 'job'
     steps:
       - name: "Display Github info"
         run: echo "${{ toJSON(github) }}"
@@ -33,3 +40,15 @@ jobs:
         run: |
           #I need to create a variable "MY_VAR" in ".settings/secrets/actions" as https://github.com/sapineau/github-actions-course/settings/secrets/actions
           echo "My repository variable: ${{ vars.MY_VAR }}"
+
+      - name: "Print Env Variables"
+        env: 
+          MY_OVERWRITTEN_VAR: 'step'
+        run: |
+          echo "Workflow env: ${{ env.MY_WORKFLOW_VAR }}"
+          echo "Overwritten env: ${{ env.MY_OVERWRITTEN_VAR }}"
+
+      - name: "Print Env Variables 2"
+        run: |
+          echo "Workflow env: ${{ env.MY_WORKFLOW_VAR }}"
+          echo "Overwritten env: ${{ env.MY_OVERWRITTEN_VAR }}"
