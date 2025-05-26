@@ -18,11 +18,13 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
+        # This working directory is applied on all jobs and steps
         working-directory: 13-caching/react-app
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # actions/setup-node@v4.4.0 already implement caching (7 days with same version)
       - name: Setup Node
         uses: actions/setup-node@v4.4.0
         with:
@@ -35,9 +37,11 @@ jobs:
         with:
           # It's important to provide the entire path, since the working-directory option set as default at the job level applies only to run commands.
           path: 13-caching/react-app/node_modules
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+          # It's important to provide the entire path, we can have multiple package-lock.json in our repo. We only want this one!
+          key: deps-node-modules-${{ hashFiles('13-caching/react-app/package-lock.json') }}
 
       - name: Install Dependencies
+        # Install dependencies only if there is no cache
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
@@ -49,3 +53,8 @@ jobs:
 
       - name: Deploying to nonprod
         run: echo "Deploying to nonprod"
+
+      # There is no step for making the cache.
+      # This is normal. 
+      # actions/cache@v3 provide an extra step after the end of each jobs that take the content of "actions/cache@v3.path" and put it into a kvp where key = "actions/cache@v3.key"
+      # next time we call the cache, it will compare the cached key with key of checkout files.
