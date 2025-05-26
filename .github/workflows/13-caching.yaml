@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        # This working directory is applied on all jobs and steps
+        # This working directory is applied on all jobs and steps (only on run)
         working-directory: 13-caching/react-app
     steps:
       - name: Checkout code
