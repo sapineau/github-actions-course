@@ -1,7 +1,7 @@
 name: 08 - Using Variables
 
 on:
-  push:
+  #push:
   workflow_dispatch:
 
 env:
@@ -44,7 +44,7 @@ jobs:
 
   echo-prod:
     runs-on: ubuntu-latest
-    environment: staging  # Set the environment to 'prod'
+    environment: prod  # Set the environment to 'prod'
     steps:
 
       - name: Print Prod Variables
