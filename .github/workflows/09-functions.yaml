@@ -10,10 +10,10 @@ jobs:
     steps:
 
       - name: Print PR title
-        run: ${{ github.event.pull_request.title }}
+        run: echo ${{ github.event.pull_request.title }}
 
       - name: Print PR labels
-        run: ${{ toJSON(github.event.pull_request.labels) }}
+        run: echo ${{ toJSON(github.event.pull_request.labels) }}
 
       - name: Bug step
         if: ${{ failure() && contains(github.event.pull_request.title, 'fix') }}
