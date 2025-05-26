@@ -1,7 +1,7 @@
 name: 09 - Using Functions
 
 on:
-  pull_request:
+  # pull_request:
   workflow_dispatch:
 
 jobs:
@@ -14,25 +14,30 @@ jobs:
 
       - name: Print PR labels
         run: | 
+          # This way allows to convert to json a multiline value
+          # Without it, we will only print as json the first line (here '[') and then an error
+          # 'cat << EOF' manage to transform an multiline element into json
+          # Usually, a json content come on a single line.
+          # It is like this here for the explanation
           cat << EOF
           ${{ toJSON(github.event.pull_request.labels.*.description) }}
           EOF
 
       - name: Bug step
-        if: ${{ failure() && contains(github.event.pull_request.title, 'fix') }}
+        if: ${{ !cancelled() && contains(github.event.pull_request.title, 'fix') }}
         run: echo "I am a bug fix"
 
-      - name: Sleep for 20 seconds
-        run: sleep 20
+      # - name: Sleep for 20 seconds
+      #   run: sleep 20
 
-      - name: Failing step
-        run: exit 1
+      # - name: Failing step
+      #   run: exit 1
 
-      - name: I will be skipped
+      - name: I will execute
         if: success()
         run: echo "I will print if previous steps succeed."
 
-      - name: I will execute
+      - name: I will be skipped
         if: failure()
         run: echo "I will print if any previous step fails."
 
