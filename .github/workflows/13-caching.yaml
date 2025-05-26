@@ -33,7 +33,8 @@ jobs:
         if: ${{ inputs.use-cache }}
         uses: actions/cache@v3
         with:
-          path: node_modules
+          # It's important to provide the entire path, since the working-directory option set as default at the job level applies only to run commands.
+          path: 13-caching/react-app/node_modules
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install Dependencies
