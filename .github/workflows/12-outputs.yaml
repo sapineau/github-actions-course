@@ -32,6 +32,8 @@ jobs:
           cat "$GITHUB_OUTPUT"
           echo ""
 
+      - name: Step with mistake
+        run: |
           # ">" instead of ">>"!
           # ">" erase $GITHUB_OUTPUT
           # ">>" add data at the end of $GITHUB_OUTPUT
