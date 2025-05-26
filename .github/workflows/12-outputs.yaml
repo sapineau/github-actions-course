@@ -22,18 +22,26 @@ jobs:
       - name: Build
         id: build
         run: |
+          echo "Add data to GITHUB_OUTPUT"
           echo "status=${{ inputs.build-status }}" >> "$GITHUB_OUTPUT"
           echo "output1=value1" >> "$GITHUB_OUTPUT"
           echo "output2=value2" >> "$GITHUB_OUTPUT"
+          echo ""
 
+          echo "Retrieve data from GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
+          echo ""
 
           # ">" instead of ">>"!
           # ">" erase $GITHUB_OUTPUT
           # ">>" add data at the end of $GITHUB_OUTPUT
+          echo "Replace data to GITHUB_OUTPUT"
           echo "mistake=true" > "$GITHUB_OUTPUT"
+          echo ""
           
+          echo "Retrieve data from GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
+          echo ""
 
   deploy:
     runs-on: ubuntu-latest
