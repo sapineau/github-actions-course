@@ -44,7 +44,7 @@ jobs:
 
   echo-prod:
     runs-on: ubuntu-latest
-    environment: prod  # Set the environment to 'prod'
+    environment: staging  # Set the environment to 'prod'
     steps:
 
       - name: Print Prod Variables
