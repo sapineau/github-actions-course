@@ -1,0 +1,61 @@
+name: 14 - Working with Artifacts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # This working directory is applied on all jobs and steps (only on run)
+        working-directory: 14-artifacts/react-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # actions/setup-node@v4.4.0 already implement caching (7 days with same version)
+      - name: Setup Node
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 20.x
+
+      - name: Download cached dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          # It's important to provide the entire path, since the working-directory option set as default at the job level applies only to run commands.
+          path: 14-artifacts/react-app/node_modules
+          key: deps-node-modules-${{ hashFiles('14-artifacts/react-app/package-lock.json') }}
+        
+      - name: Install Dependencies
+        # Install dependencies only if there is no cache
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Build code
+        run: npm run build
+
+      - name: Upload build files
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: 14-artifacts/react-app/build
+
+          
+  deploy:
+    runs-on: ubuntu-latest
+    needs: 
+      - test-build
+    steps:
+      - name: Download build files
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+          path: build
+          
+      - name: Show folder structure
+        run: ls -R
