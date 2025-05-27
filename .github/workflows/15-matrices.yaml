@@ -5,7 +5,8 @@ on:
 
 jobs:
   backwards-compatibility:
-    runs-on: ubuntu-latest
+    # Runs on os to test
+    runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }}-${{ matrix.node-version }}
     strategy:
       # ???
