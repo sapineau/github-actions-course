@@ -11,7 +11,7 @@ jobs:
     name: ${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.tag || '' }}
     strategy:
       # If true, if a job fail, the other will be cancelled asap.
-      fail-fast: false # default value
+      fail-fast: false # default to true
       matrix:
         node-version: [18.x, 20.x, 21.x]
         os: [ubuntu-latest, windows-latest]
@@ -35,7 +35,6 @@ jobs:
 
       - name: Perform some tests
         run: |
-          sleep 10
           echo "Running tests on OS ${{ matrix.os }} and NodeJS ${{ matrix.node-version }}"
 
       - name: Upload test results
