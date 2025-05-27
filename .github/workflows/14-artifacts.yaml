@@ -9,6 +9,7 @@ env:
 
 jobs:
   test-build:
+    name: Test and Build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -47,6 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.test-coverage-key }}
+          # We need to provide the full path. The "defaults.run.working-directory" only works for run actions!
           path: 14-artifacts/react-app/coverage
 
       - name: Build code
@@ -57,6 +59,7 @@ jobs:
         with:
           # Use an env to share artifact name between jobs
           name: ${{ env.build-artifact-key }}
+          # We need to provide the full path. The "defaults.run.working-directory" only works for run actions!
           path: 14-artifacts/react-app/build
 
 
