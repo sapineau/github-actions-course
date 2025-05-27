@@ -30,7 +30,7 @@ jobs:
         run: echo "Running E2E"
 
 
-  deploy-prod:
+  deploy-prod-frontend:
     runs-on: ubuntu-latest
     needs: e2e-tests
     environment: prod
@@ -39,4 +39,20 @@ jobs:
       my-env-value: ${{ vars.MY_ENV_VALUE || 'default value' }}
     steps:
       - name: Echo vars
-        run: echo "Deploying to prod"
+        run: echo "Deploying frontend prod"
+
+
+  deploy-prod-backend:
+    name: deploy-prod-backend-${{ matrix.ring }}
+    runs-on: ubuntu-latest
+    needs: e2e-tests
+    environment: prod
+    strategy:
+      matrix:
+        ring: [prod-01, prod-02]
+    env:
+      # environments need to declare MY_ENV_VALUE as variable
+      my-env-value: ${{ vars.MY_ENV_VALUE || 'default value' }}
+    steps:
+      - name: Echo vars
+        run: echo "Deploying backend prod ${{ matrix.ring }}"
