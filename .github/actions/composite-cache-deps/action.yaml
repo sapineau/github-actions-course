@@ -12,6 +12,10 @@ inputs:
     required: false
     description: The working directory of the application
     default: '.'
+  target-env:
+    required: false
+    description: "dev" or "prod". Controls whether dev dependencies are installed
+    default: dev
 
 runs:
   # Define a "composite" action => written in yaml only
@@ -28,13 +32,15 @@ runs:
       with:
         path: ${{ inputs.working-dir }}/node_modules
         # Use format() to mix data + 'const'
-        key: deps-node-modules-${{ hashFiles(format('{0}/{1}', inputs.working-dir, 'package-lock.json')) }}
+        key: deps-node-modules-${{ inputs.target-env }}-${{ hashFiles(format('{0}/{1}', inputs.working-dir, 'package-lock.json')) }}
       
     - name: Install Dependencies
       # Install dependencies only if there is no cache
       if: steps.cache.outputs.cache-hit != 'true'
       # On run on composite action, we need to specifiy which type of shell use.
       shell: bash
-      run: |
-        cd ${{ inputs.working-dir }}
-        npm ci
+      # It is not possible to pass the working directory on job because there is no job.
+      # Job of the caller is in another context. So we need to specify the working directory here.
+      working-directory: ${{ inputs.working-dir }}
+      # omit dev depenendy if env define on dev
+      run: npm ci ${{ inputs.target-env == 'dev' && '--omit=dev' || '' }}
