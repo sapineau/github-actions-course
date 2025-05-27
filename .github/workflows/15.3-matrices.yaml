@@ -22,8 +22,15 @@ jobs:
             opacity: 100
           - color: red
             shape: triangle
+          - color: green
+            shape: circle
+            size: medium
         exclude:
-          - opacity: 75
+          # We cannot exclude an element include!
+          #- opacity: 75
+          # We can only exclude element from the initial matrix!
+          - color: green
+            shape: circle
     steps:
       - name: Dummy step
         run: |
