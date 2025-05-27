@@ -42,7 +42,7 @@ jobs:
         run: echo "Uploading test results"
   
 
-  include-example:
+  include-example-1:
     runs-on: ubuntu-latest
      # Please provide a good name to explain in with cell of the matrix we are
     name: ${{ matrix.color }}-${{ matrix.shape }}-${{ matrix.size }}-${{ matrix.opacity }}
@@ -55,6 +55,31 @@ jobs:
         size: [small, large]
         include: 
           # Opacity with links to color, shape or size cannot be added!
+          - opacity: 50
+          - color: red
+            shape: triangle
+    steps:
+      - name: Dummy step
+        run: |
+          echo 'color: ${{ matrix.color }}'
+          echo 'shape: ${{ matrix.shape }}'
+          echo 'size: ${{ matrix.size }}'
+          echo 'opacity: ${{ matrix.opacity }}'
+  
+
+  include-example-2:
+    runs-on: ubuntu-latest
+     # Please provide a good name to explain in with cell of the matrix we are
+    name: ${{ matrix.color }}-${{ matrix.shape }}-${{ matrix.size }}-${{ matrix.opacity }}
+    strategy:
+      # If true, if a job fail, the other will be cancelled asap.
+      fail-fast: false # default value
+      matrix:
+        color: [red, green]
+        shape: [circle, square]
+        size: [small, large]
+        include: 
+          # Opacity now become a default value because it is added later with a link to the original matrix
           - opacity: 50
           - color: red
             opacity: 75
