@@ -19,8 +19,7 @@ jobs:
       my-env-value: ${{ vars.MY_ENV_VALUE || 'default value' }}
     steps:
       - name: Echo vars
-        run: |
-          "Deploying to staging"
+        run: echo "Deploying to staging"
   
 
   e2e-tests:
@@ -40,5 +39,4 @@ jobs:
       my-env-value: ${{ vars.MY_ENV_VALUE || 'default value' }}
     steps:
       - name: Echo vars
-        run: |
-          "Deploying to prod"
+        run: echo "Deploying to prod"
