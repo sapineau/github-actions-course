@@ -10,8 +10,8 @@ jobs:
     # Please provide a good name to explain in with cell of the matrix we are
     name: ${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.tag || '' }}
     strategy:
-      # ???
-      fail-fast: true
+      # If true, if a job fail, the other will be cancelled asap.
+      fail-fast: false # default value
       matrix:
         node-version: [18.x, 20.x, 21.x]
         os: [ubuntu-latest, windows-latest]
