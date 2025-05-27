@@ -14,8 +14,8 @@ inputs:
     default: '.'
   target-env:
     required: false
-    description: "dev" or "prod". Controls whether dev dependencies are installed
-    default: dev
+    description: '"dev" or "prod". Controls whether dev dependencies are installed'
+    default: 'dev'
 
 runs:
   # Define a "composite" action => written in yaml only
