@@ -89,9 +89,9 @@ async function run() {
     });
 
     const commitLog = addLog('chore: Update NPM dependencies');
-    await exec.exec(`git commit -m "${commitLog}", [], {
+    await exec.exec(`git commit -m "${commitLog}"`, [], {
       ...commonExecOptions
-    }`);
+    });
 
     await exec.exec(`git push -u origin ${targetBranch}`, [], {
       ...commonExecOptions
