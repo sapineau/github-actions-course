@@ -14,7 +14,7 @@ async function run() {
 
   // Parse input
   const braseBranch = core.getInput('base-branch', { required: false });
-  if(!regexAlphaNumericWithDot.text(braseBranch)){
+  if(!regexAlphaNumericWithDot.test(braseBranch)){
     core.setFailed('braseBranch contains forbidden caracters');
     return;
   } else {
@@ -22,7 +22,7 @@ async function run() {
   }
 
   const targetBranch = core.getInput('target-branch', { required: false });
-  if(!regexAlphaNumericWithDot.text(targetBranch)){
+  if(!regexAlphaNumericWithDot.test(targetBranch)){
     core.setFailed('targetBranch contains forbidden caracters');
     return;
   } else {
@@ -30,7 +30,7 @@ async function run() {
   }
 
   const workingDir = core.getInput('working-directory', { required: true });
-  if(!regexAlphaNumeric.text(workingDir)){
+  if(!regexAlphaNumeric.test(workingDir)){
     core.setFailed('workingDir contains forbidden caracters');
     return;
   } else {
