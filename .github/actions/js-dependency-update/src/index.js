@@ -18,7 +18,7 @@ async function run() {
     core.setFailed('braseBranch contains forbidden caracters');
     return;
   } else {
-    core.info('braseBranch: {0}', braseBranch);
+    core.info('braseBranch: ' + braseBranch);
   }
 
   // target branch is not mandatory
@@ -27,7 +27,7 @@ async function run() {
     core.setFailed('targetBranch contains forbidden caracters');
     return;
   } else {
-    core.info('targetBranch: {0}', targetBranch);
+    core.info('targetBranch: ' + targetBranch);
   }
 
   // working dir is mandatory
@@ -36,16 +36,17 @@ async function run() {
     core.setFailed('workingDir contains forbidden caracters');
     return;
   } else {
-    core.info('workingDir: {0}', workingDir);
+    core.info('workingDir: ' + workingDir);
   }
 
   const ghToken = core.getInput('gh-token', { required: true });
-  core.info('ghToken: {0}', ghToken);
+  core.info('ghToken: ' + ghToken);
 
   // Execute the npm update command within the working directory
-  exec.exec('cd {0}', workingDir);
+  core.info('Go to ' + workingDir)
+  exec.exec('cd ' + workingDir);
   var npmUpdateOut = exec.getExecOutput('npm update');
-  core.info('npm update: {0}', npmUpdateOut)
+  core.info('npm update: ' + npmUpdateOut)
 
   // Check whether there are modified package*.json files
   var getStatusOut = exec.getExecOutput('git status -s package*.json');
@@ -69,8 +70,6 @@ async function run() {
     4.2 Create a PR to the base-branch using the octokit API (github)
   5. Otherwise, conclude the custom action
   */
-
-  core.info('I am a custom JS action');
 }
  
 // Call of this function
