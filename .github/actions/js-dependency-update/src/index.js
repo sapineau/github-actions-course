@@ -1,6 +1,6 @@
 // Declare github action library
 const core = require('@actions/core');
-const core = require('@actions/exec');
+const exec = require('@actions/exec');
  
 // Declare function where ou github action will be written
 // Please write an async function
