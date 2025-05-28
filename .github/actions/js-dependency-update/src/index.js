@@ -2,70 +2,62 @@
 const core = require('@actions/core');
 const exec = require('@actions/exec');
  
+const validateBranchName = ({ branchName }) =>
+  /^[a-zA-Z0-9_\-\.\/]+$/.test(branchName);
+const validateDirectoryName = ({ dirName }) =>
+  /^[a-zA-Z0-9_\-\/]+$/.test(dirName);
+
 // Declare function where ou github action will be written
 // Please write an async function
 async function run() { 
   core.info('Start js-dependancy-update action');
 
   //regex
-  var regexAlphaNumericWithDot = new RegExp("^[0-9a-z_\\-\\./]+$", "i");
-  var regexAlphaNumeric = new RegExp("^[0-9a-z_\\-/]+$", "i");
   var regexAnyCharacter = new RegExp("^.+^$")
 
   // base branch is not mandatory
-  const braseBranch = core.getInput('base-branch', { required: false });
-  if(!regexAlphaNumericWithDot.test(braseBranch) && braseBranch != ''){
-    core.setFailed('braseBranch contains forbidden caracters');
+  const baseBranch = core.getInput('base-branch', { required: false });
+  if(!validateBranchName(baseBranch) && baseBranch != ''){
+    core.setFailed('Invalid base-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
     return;
-  } else {
-    core.info('braseBranch: ' + braseBranch);
   }
 
   // target branch is not mandatory
   const targetBranch = core.getInput('target-branch', { required: false });
-  if(!regexAlphaNumericWithDot.test(targetBranch) && braseBranch != ''){
-    core.setFailed('targetBranch contains forbidden caracters');
+  if(!validateBranchName(targetBranch) && braseBranch != ''){
+    core.setFailed('Invalid target-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
     return;
-  } else {
-    core.info('targetBranch: ' + targetBranch);
   }
 
   // working dir is mandatory
   const workingDir = core.getInput('working-directory', { required: true });
-  if(!regexAlphaNumeric.test(workingDir)){
-    core.setFailed('workingDir contains forbidden caracters');
+  if(!validateDirectoryName(workingDir)){
+    core.setFailed('Invalid working directory name. Directory names should include only characters, numbers, hyphens, underscores, and forward slashes.');
     return;
-  } else {
-    core.info('workingDir: ' + workingDir);
   }
 
-  const ghToken = core.getInput('gh-token', { required: true });
-  core.info('ghToken: ' + ghToken);
+  core.info(`[js-dependency-update] : base branch is ${baseBranch}`);
+  core.info(`[js-dependency-update] : target branch is ${targetBranch}`);
+  core.info(`[js-dependency-update] : working directory is ${workingDir}`);
 
   // Execute the npm update command within the working directory
-  await exec.exec('cd ' + workingDir);
-  await exec.exec('npm update');
+  await exec.exec('npm update', [], {
+    cwd: workingDir,
+  });
 
   // Check whether there are modified package*.json files
-  let getStatusOut = '';
-  let getStatusError = '';
-
-  const options = {};
-  options.listeners = {
-    stdout: (data) => {
-      getStatusOut += data.toString();
-    },
-    stderr: (data) => {
-      getStatusError += data.toString();
+  const gitStatus = await exec.getExecOutput(
+    'git status -s package*.json',
+    [],
+    {
+      cwd: workingDir,
     }
-  };
+  );
 
-  await exec.exec('git status -s package*.json', options);
-
-  if(regexAnyCharacter.test(getStatusOut)){
-    core.info('=> Some update available')
+  if(gitStatus.stdout.length > 0){
+    core.info('[js-dependency-update] : There are updates available!');
   } else {
-    core.info('=> No update available')
+    core.info('[js-dependency-update] : No updates at this point in time.');
   }
   
 
