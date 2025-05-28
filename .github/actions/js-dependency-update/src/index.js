@@ -21,9 +21,9 @@ async function run() {
     core.info('braseBranch: {0}', braseBranch);
   }
 
-  // target branch always appears
+  // target branch is not mandatory
   const targetBranch = core.getInput('target-branch', { required: false });
-  if(!regexAlphaNumericWithDot.test(targetBranch)){
+  if(!regexAlphaNumericWithDot.test(targetBranch) && braseBranch != ''){
     core.setFailed('targetBranch contains forbidden caracters');
     return;
   } else {
