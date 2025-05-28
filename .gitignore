@@ -1,1 +1,5 @@
+# Ignore node_modules
 node_modules
+
+# But, do not ignore node_modules on actions
+!.github/actions/**/node_modules
