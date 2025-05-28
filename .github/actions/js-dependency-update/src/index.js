@@ -8,13 +8,13 @@ const validateBranchName = ({ branchName }) =>
 const validateDirectoryName = ({ dirName }) =>
   /^[a-zA-Z0-9_\-\/]+$/.test(dirName);
 
-const addLog = ({msg}) =>
+const addLog = (msg) =>
   `[js-dependency-update] : ${msg}`;
-const logInfo = ({msg}) =>
+const logInfo = (msg) =>
   core.info(addLog(msg));
-const logError = ({msg}) =>
+const logError = (msg) =>
   core.error(addLog(msg));
-const setFailed = ({msg}) =>
+const setFailed = (msg) =>
   core.setFailed(addLog(msg));
 
 // Declare function where ou github action will be written
