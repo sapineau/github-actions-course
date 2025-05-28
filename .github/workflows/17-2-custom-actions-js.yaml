@@ -1,6 +1,11 @@
 name: 17 - 2 - Custom Actions - JS
 run-name: "17 - 2 - Custom Actions - JS - Base branch '${{ inputs.base-branch }}' - Target branch '${{ inputs.target-branch }}' - Work dir '${{ inputs.working-directory }}'"
 
+# Add permissions to write contents and pull-requests
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -19,10 +24,6 @@ on:
         type: string
         required: true
         default: '17-custom-actions/react-app'
-      gh-token:
-        description: github token
-        type: string
-        required: true
       debug:
         description: use debug
         type: boolean
@@ -44,5 +45,5 @@ jobs:
           base-branch: ${{ inputs.base-branch }}
           target-branch: ${{ inputs.target-branch }}
           working-directory: ${{ inputs.working-directory }}
-          gh-token: ${{ inputs.gh-token }}
+          gh-token: ${{ github.token }}
           debug:  ${{ inputs.debug }}

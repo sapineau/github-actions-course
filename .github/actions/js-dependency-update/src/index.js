@@ -1,35 +1,45 @@
 // Declare github action library
 const core = require('@actions/core');
 const exec = require('@actions/exec');
+const github = require('@actions/github');
  
 const validateBranchName = ({ branchName }) =>
   /^[a-zA-Z0-9_\-\.\/]+$/.test(branchName);
 const validateDirectoryName = ({ dirName }) =>
   /^[a-zA-Z0-9_\-\/]+$/.test(dirName);
 
+const addLog = ({msg}) =>
+  `[js-dependency-update] : ${msg}`;
+const logInfo = ({msg}) =>
+  core.info(addLog(msg));
+const logError = ({msg}) =>
+  core.error(addLog(msg));
+const setFailed = ({msg}) =>
+  core.setFailed(addLog(msg));
+
 // Declare function where ou github action will be written
 // Please write an async function
 async function run() { 
-  core.info('Start js-dependancy-update action');
+  logInfo('Start js-dependancy-update action');
 
   // base branch is mandatory
   const baseBranch = core.getInput('base-branch', { required: true });
   if(!validateBranchName(baseBranch)){
-    core.setFailed('Invalid base-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
+    setFailed('Invalid base-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
     return;
   }
 
   // target branch is mandatory
   const targetBranch = core.getInput('target-branch', { required: true });
   if(!validateBranchName(targetBranch)){
-    core.setFailed('Invalid target-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
+    setFailed('Invalid target-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
     return;
   }
 
   // working dir is mandatory
   const workingDir = core.getInput('working-directory', { required: true });
   if(!validateDirectoryName(workingDir)){
-    core.setFailed('Invalid working directory name. Directory names should include only characters, numbers, hyphens, underscores, and forward slashes.');
+    setFailed('Invalid working directory name. Directory names should include only characters, numbers, hyphens, underscores, and forward slashes.');
     return;
   }
 
@@ -37,14 +47,16 @@ async function run() {
   const ghToken = core.getInput('gh-token', { required: true });
   // make gh-token as a secret for security reason
   core.setSecret(ghToken);
+  // use token
+  const octokit = github.getOctokit(ghToken);
 
   // debug
   const debug = core.getBooleanInput('debug');
 
   // Show variables
-  core.info(`[js-dependency-update] : base branch is '${baseBranch}'`);
-  core.info(`[js-dependency-update] : target branch is '${targetBranch}'`);
-  core.info(`[js-dependency-update] : working directory is '${workingDir}'`);
+  logInfo(`base branch is '${baseBranch}'`);
+  logInfo(`target branch is '${targetBranch}'`);
+  logInfo(`working directory is '${workingDir}'`);
 
   // Execute the npm update command within the working directory
   await exec.exec('npm update', [], {
@@ -61,9 +73,41 @@ async function run() {
   );
 
   if(gitStatus.stdout.length > 0){
-    core.info('[js-dependency-update] : There are updates available!');
+    logInfo('There are updates available!');
+
+    await exec.exec(`git switch -c ${targetBranch}`, [], {
+      cwd: workingDir,
+    });
+
+    await exec.exec('git add .', [], {
+      cwd: workingDir,
+    });
+
+    const commitLog = addLog('Update NPM dependencies');
+    await exec.exec(`git commit -m "${commitLog}"`, [], {
+      cwd: workingDir,
+    });
+
+    await exec.exec(`git push  -u origin ${targetBranch}`, [], {
+      cwd: workingDir,
+    });
+
+    try {
+      await octokit.rest.pulls.create({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        title: `Update NPM dependencies`,
+        body: `This pull request updates NPM packages`,
+        base: baseBranch,
+        head: targetBranch 
+      });
+    } catch (e) {
+      logError('Something went wrong while creating the PR. Check logs below.');
+      setFailed(e.message);
+      logError(e);
+    }
   } else {
-    core.info('[js-dependency-update] : No updates at this point in time.');
+    logInfo('No updates at this point in time.');
   }
   
 
