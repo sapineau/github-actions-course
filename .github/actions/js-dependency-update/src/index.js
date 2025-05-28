@@ -12,16 +12,16 @@ const validateDirectoryName = ({ dirName }) =>
 async function run() { 
   core.info('Start js-dependancy-update action');
 
-  // base branch is not mandatory
-  const baseBranch = core.getInput('base-branch', { required: false });
-  if(!validateBranchName(baseBranch) && baseBranch != ''){
+  // base branch is mandatory
+  const baseBranch = core.getInput('base-branch', { required: true });
+  if(!validateBranchName(baseBranch)){
     core.setFailed('Invalid base-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
     return;
   }
 
-  // target branch is not mandatory
-  const targetBranch = core.getInput('target-branch', { required: false });
-  if(!validateBranchName(targetBranch) && braseBranch != ''){
+  // target branch is mandatory
+  const targetBranch = core.getInput('target-branch', { required: true });
+  if(!validateBranchName(targetBranch)){
     core.setFailed('Invalid target-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
     return;
   }
@@ -33,7 +33,7 @@ async function run() {
     return;
   }
 
-  // gh token
+  // gh token is mandatory
   const ghToken = core.getInput('gh-token', { required: true });
   // make gh-token as a secret for security reason
   core.setSecret(ghToken);
