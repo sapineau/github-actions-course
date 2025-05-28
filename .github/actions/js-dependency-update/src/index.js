@@ -47,8 +47,6 @@ async function run() {
   const ghToken = core.getInput('gh-token', { required: true });
   // make gh-token as a secret for security reason
   core.setSecret(ghToken);
-  // use token
-  const octokit = github.getOctokit(ghToken);
 
   // debug
   const debug = core.getBooleanInput('debug');
@@ -58,6 +56,10 @@ async function run() {
   logInfo(`target branch is '${targetBranch}'`);
   logInfo(`working directory is '${workingDir}'`);
 
+  const commonExecOptions = {
+    cwd: workingDir,
+  };
+
   // Execute the npm update command within the working directory
   await exec.exec('npm update', [], {
     cwd: workingDir,
@@ -65,32 +67,37 @@ async function run() {
 
   // Check whether there are modified package*.json files
   const gitStatus = await exec.getExecOutput(
-    'git status -s package*.json',
-    [],
-    {
-      cwd: workingDir,
+    'git status -s package*.json', [], {
+      ...commonExecOptions
     }
   );
 
   if(gitStatus.stdout.length > 0){
     logInfo('There are updates available!');
 
-    await exec.exec(`git switch -c ${targetBranch}`, [], {
-      cwd: workingDir,
+    // Mandatory or we cannot commit our modifications
+    await exec.exec(`git config --global user.name "gh-automation"`);
+    await exec.exec(`git config --global user.email "gh-automation@email.com"`);
+
+    await exec.exec(`git checkout -b ${targetBranch}`, [], {
+      ...commonExecOptions
     });
 
-    await exec.exec('git add .', [], {
-      cwd: workingDir,
+    //protect add here
+    await exec.exec('git add package.json package-lock.json', [], {
+      ...commonExecOptions
     });
 
-    const commitLog = addLog('Update NPM dependencies');
+    const commitLog = addLog('chore: Update NPM dependencies');
     await exec.exec(`git commit -m "${commitLog}"`, [], {
-      cwd: workingDir,
+      ...commonExecOptions
     });
 
-    await exec.exec(`git push  -u origin ${targetBranch}`, [], {
-      cwd: workingDir,
+    await exec.exec(`git push -u origin ${targetBranch}`, [], {
+      ...commonExecOptions
     });
+
+    const octokit = github.getOctokit(ghToken);
 
     try {
       await octokit.rest.pulls.create({
