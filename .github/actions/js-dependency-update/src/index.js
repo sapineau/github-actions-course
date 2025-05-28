@@ -44,12 +44,12 @@ async function run() {
 
   // Execute the npm update command within the working directory
   core.info('Go to ' + workingDir)
-  exec.exec('cd ' + workingDir);
-  var npmUpdateOut = exec.getExecOutput('npm update');
+  await exec.exec('cd ' + workingDir);
+  const { npmUpdateOut } = await exec.getExecOutput('npm update');
   core.info('npm update: ' + npmUpdateOut)
 
   // Check whether there are modified package*.json files
-  var getStatusOut = exec.getExecOutput('git status -s package*.json');
+  const { getStatusOut } = await exec.getExecOutput('git status -s package*.json');
   if(regexAnyCharacter.test(getStatusOut)){
     core.info('=> Some update available')
   } else {
