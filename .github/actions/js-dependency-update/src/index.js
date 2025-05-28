@@ -8,8 +8,8 @@ async function run() {
   core.info('Start js-dependancy-update action');
 
   //regex
-  var regexAlphaNumericWithDot = new RegExp("^[0-9a-z_-./]+$", "i");
-  var regexAlphaNumeric = new RegExp("^[0-9a-z_-/]+$", "i");
+  var regexAlphaNumericWithDot = new RegExp("^[0-9a-z_\\-\\./]+$", "i");
+  var regexAlphaNumeric = new RegExp("^[0-9a-z_\\-/]+$", "i");
   var regexAnyCharacter = new RegExp("^.+^$")
 
   // Parse input
