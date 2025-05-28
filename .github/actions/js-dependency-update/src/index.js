@@ -12,9 +12,6 @@ const validateDirectoryName = ({ dirName }) =>
 async function run() { 
   core.info('Start js-dependancy-update action');
 
-  //regex
-  var regexAnyCharacter = new RegExp("^.+^$")
-
   // base branch is not mandatory
   const baseBranch = core.getInput('base-branch', { required: false });
   if(!validateBranchName(baseBranch) && baseBranch != ''){
@@ -36,6 +33,15 @@ async function run() {
     return;
   }
 
+  // gh token
+  const ghToken = core.getInput('gh-token', { required: true });
+  // make gh-token as a secret for security reason
+  core.setSecret(ghToken);
+
+  // debug
+  const debug = core.getBooleanInput('debug');
+
+  // Show variables
   core.info(`[js-dependency-update] : base branch is '${baseBranch}'`);
   core.info(`[js-dependency-update] : target branch is '${targetBranch}'`);
   core.info(`[js-dependency-update] : working directory is '${workingDir}'`);

@@ -18,6 +18,7 @@ inputs:
     required: true
   debug:
     description: Whether the output debug messages to the console
+    default: false
     required: false
 
 runs:
