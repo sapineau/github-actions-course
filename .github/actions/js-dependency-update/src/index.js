@@ -83,15 +83,15 @@ async function run() {
       ...commonExecOptions
     });
 
-    //protect add here
+    //protect add here (instead of 'git add .')
     await exec.exec('git add package.json package-lock.json', [], {
       ...commonExecOptions
     });
 
     const commitLog = addLog('chore: Update NPM dependencies');
-    await exec.exec(`git commit -m "${commitLog}"`, [], {
+    await exec.exec(`git commit -m "${commitLog}", [], {
       ...commonExecOptions
-    });
+    }`);
 
     await exec.exec(`git push -u origin ${targetBranch}`, [], {
       ...commonExecOptions
@@ -100,6 +100,7 @@ async function run() {
     const octokit = github.getOctokit(ghToken);
 
     try {
+      // create pull request from rest api.
       await octokit.rest.pulls.create({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
@@ -116,22 +117,7 @@ async function run() {
   } else {
     logInfo('No updates at this point in time.');
   }
-  
-
-  /*
-  1. Parse input
-    1.1 base-branch from which to check for updates
-    1.2 target-branch to use to create the PR
-    1.3 Github Token for authentication purposes (to create the PRs)
-    1.4 Working directory for which to check for dependancies
-  2. Execute the npm update command within the working directory
-  3. Check whether there are modified package*.json files
-  4. If there are modified file:
-    4.1 Add and commit files to the target-branch
-    4.2 Create a PR to the base-branch using the octokit API (github)
-  5. Otherwise, conclude the custom action
-  */
 }
- 
+
 // Call of this function
 run();
