@@ -12,15 +12,16 @@ async function run() {
   var regexAlphaNumeric = new RegExp("^[0-9a-z_\\-/]+$", "i");
   var regexAnyCharacter = new RegExp("^.+^$")
 
-  // Parse input
+  // base branch is not mandatory
   const braseBranch = core.getInput('base-branch', { required: false });
-  if(!regexAlphaNumericWithDot.test(braseBranch)){
+  if(!regexAlphaNumericWithDot.test(braseBranch) && braseBranch != ''){
     core.setFailed('braseBranch contains forbidden caracters');
     return;
   } else {
     core.info('braseBranch: {0}', braseBranch);
   }
 
+  // target branch always appears
   const targetBranch = core.getInput('target-branch', { required: false });
   if(!regexAlphaNumericWithDot.test(targetBranch)){
     core.setFailed('targetBranch contains forbidden caracters');
@@ -29,6 +30,7 @@ async function run() {
     core.info('targetBranch: {0}', targetBranch);
   }
 
+  // working dir is mandatory
   const workingDir = core.getInput('working-directory', { required: true });
   if(!regexAlphaNumeric.test(workingDir)){
     core.setFailed('workingDir contains forbidden caracters');
