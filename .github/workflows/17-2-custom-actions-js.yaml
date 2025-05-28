@@ -8,5 +8,10 @@ jobs:
   dependency-update:
     runs-on: ubuntu-latest
     steps:
+      # The checkout is mandatory here
+      # It allows to retrieve the react app AND the action.yaml file to use it.
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
       - name: Check for dependency updates
         uses: ./.github/actions/js-dependency-update
