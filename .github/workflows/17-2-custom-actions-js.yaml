@@ -1,5 +1,5 @@
 name: 17 - 2 - Custom Actions - JS
-run-name: 17 - 2 - Custom Actions - JS
+run-name: "17 - 2 - Custom Actions - JS - Base branch '${{ github.head_ref }}' - Target branch '${{ github.base_ref }}' - Work dir '17-custom-actions/react-app'"
 
 on:
   workflow_dispatch:
@@ -12,6 +12,12 @@ jobs:
       # It allows to retrieve the react app AND the action.yaml file to use it.
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Check for dependency updates
         uses: ./.github/actions/js-dependency-update
+        with:
+          base-branch: ${{ github.head_ref }}
+          target-branch: ${{ github.base_ref }}
+          working-directory: '17-custom-actions/react-app'
+          gh-token: ${{ github.token }}
+          debug: 'this is a debug sentence'
