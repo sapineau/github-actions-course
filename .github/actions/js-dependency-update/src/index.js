@@ -93,7 +93,8 @@ async function run() {
       ...commonExecOptions
     });
 
-    await exec.exec(`git push -u origin ${targetBranch}`, [], {
+    // "--force" allow to force push on a already existing branch
+    await exec.exec(`git push -u origin ${targetBranch} --force`, [], {
       ...commonExecOptions
     });
 
