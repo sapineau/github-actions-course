@@ -43,11 +43,25 @@ async function run() {
   core.info('ghToken: ' + ghToken);
 
   // Execute the npm update command within the working directory
-  const { npmUpdateOut } = await exec.getExecOutput(workingDir, ['npm', 'update']);
-  core.info('npm update: ' + npmUpdateOut)
+  await exec.exec('cd ' + workingDir);
+  await exec.exec('npm update');
 
   // Check whether there are modified package*.json files
-  const { getStatusOut } = await exec.getExecOutput(workingDir, ['git', 'status', '-s', 'package*.json']);
+  let getStatusOut = '';
+  let getStatusError = '';
+
+  const options = {};
+  options.listeners = {
+    stdout: (data) => {
+      getStatusOut += data.toString();
+    },
+    stderr: (data) => {
+      getStatusError += data.toString();
+    }
+  };
+
+  await exec.exec('git status -s package*.json', options);
+
   if(regexAnyCharacter.test(getStatusOut)){
     core.info('=> Some update available')
   } else {
