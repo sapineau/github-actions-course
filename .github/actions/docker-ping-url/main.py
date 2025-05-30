@@ -1,5 +1,6 @@
 import requests
 import time
+import os
 
 # declare a function
 def ping_url(url, delay, max_trials):
@@ -12,15 +13,16 @@ def ping_url(url, delay, max_trials):
             return True
         else:
             time.sleep(delay)
+            trial = trial+1
     
     return False
 
 
 def run():
-    # Get action.yaml inputs
-    url = INPUT_URL
-    delay = INPUT_DELAY
-    max_trials = INPUT_MAX_TRIALS
+    # Get action.yaml inputs from environment variables
+    url = os.environ['INPUT_URL']
+    delay = os.environ['INPUT_DELAY']
+    max_trials = os.environ['INPUT_MAX_TRIALS']
 
     print("Start ping url '{url}' with max trials '{max_trials}' and a delay of '{delay}' between trials.")
 
