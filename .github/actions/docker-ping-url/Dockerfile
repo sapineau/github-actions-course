@@ -3,10 +3,11 @@ FROM python:alpine3.19
 WORKDIR /usr/src/app
 
 COPY requirements.txt ./
+COPY main.py ./
 
 RUN pip install --no-cache-dir --upgrade pip \
   && pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "./main.py"]
+CMD ["python", "/usr/src/app/main.py"]
