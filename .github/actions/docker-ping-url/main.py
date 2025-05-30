@@ -29,6 +29,12 @@ def ping_url(url, delay, max_trials):
     return False
 
 
+# write outputs
+def set_output(file_path, key, value):
+    outputFile = open(file_path, 'a')
+    print(f'{key}={value}', file=outputFile)
+
+
 def run():
     # Get action.yaml inputs from environment variables
     url = os.getenv('INPUT_URL')
@@ -41,8 +47,7 @@ def run():
     succeed = ping_url(url, delay, max_trials)
     
     # write outputs
-    outputFile = open(os.getenv('GITHUB_OUTPUT'), 'a')
-    print(f'url-reachable={succeed}', file=outputFile)
+    set_output(os.getenv('GITHUB_OUTPUT'), 'url-reachable', succeed)
 
     if(succeed == False):
         raise Exception(f"Impossible to reach url '{url}' after {max_trials} trials.")
