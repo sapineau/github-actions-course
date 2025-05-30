@@ -100,6 +100,9 @@ async function run() {
     }
   );
 
+  // set output
+  core.setOutput('updates-available', gitStatus.stdout.length > 0);
+
   if(gitStatus.stdout.length > 0){
     logger.info('There are updates available!');
 

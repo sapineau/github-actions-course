@@ -22,6 +22,11 @@ inputs:
     default: 'false'
     required: false
 
+outputs:
+  updates-available:
+    description: Whether there are updates available
+    # The value is define in javascript code
+
 runs:
   # Describe a javascript github action.
   # We need to provide the correct version of node
