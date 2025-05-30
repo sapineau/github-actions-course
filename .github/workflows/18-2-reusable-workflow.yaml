@@ -5,7 +5,8 @@ on:
 
 jobs:
   deploy:
-    uses: './18-1-reusable-workflows.yaml'
+    # Use full path
+    uses: './.github/workflows/18-1-reusable-workflows.yaml'
     with:
       target-directory: '.'
 
