@@ -11,6 +11,7 @@ RUN python -V
 RUN pip install --no-cache-dir --upgrade pip \
   && pip install --no-cache-dir -r requirements.txt
 
+# Copy everything to our image (except files declared from .dockerignore)
 COPY . .
 
 CMD ["python", "/usr/src/app/main.py"]
