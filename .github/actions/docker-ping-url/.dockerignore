@@ -1,0 +1,2 @@
+# Prevent Docker from copying the venv directory when building the image.
+venv
