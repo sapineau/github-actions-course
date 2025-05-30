@@ -4,6 +4,10 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
+# To inspect python version
+RUN python -V
+
+# Install pip + dependencies
 RUN pip install --no-cache-dir --upgrade pip \
   && pip install --no-cache-dir -r requirements.txt
 

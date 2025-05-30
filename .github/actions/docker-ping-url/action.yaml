@@ -15,6 +15,8 @@ inputs:
 
 runs:
   using: docker
-  # Defines which file will be used to build the Docker image, or which image will be used for execution.
+  # Defines which file image to use. 
+  # * Can be a local dockerfile: Dockerfile
+  # * Can be a public image, in this case, it is the link to the imaghe
   image: Dockerfile
 
