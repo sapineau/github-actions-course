@@ -31,6 +31,8 @@ def run():
 
     if(result == False):
         raise ValueError(f"Impossible to ping url '{url}' after {max_trials} trials!")
+    else:
+        print(f"url '{url}' pinged correctly.")
 
 
 if __name__ == "__main__":
