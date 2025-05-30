@@ -43,7 +43,7 @@ def run():
     if(succeed == False):
         raise Exception(f"Impossible to reach url '{url}' after {max_trials} trials.")
     
-    print(f"Url {url} is reachable.")
+    print(f"Url '{url}' is reachable.")
     
 
 if __name__ == "__main__":

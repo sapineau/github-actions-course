@@ -8,15 +8,16 @@ on:
         options:
           - 'https://www.google.com'
           - 'https://ww.holz.gt/'
+          - 'whatever-thisisnotwork'
         default: 'https://www.google.com'
         description: url to test
         required: true
       max_trials:
         description: Maximum trials until action fails
-        default: '10'
+        default: '5'
       delay:
         description: Delay in seconds between trials
-        default: '5'
+        default: '1'
 
 jobs:
   ping-url:
