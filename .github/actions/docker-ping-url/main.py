@@ -6,36 +6,45 @@ import os
 def ping_url(url, delay, max_trials):
     trial = 0
 
+    if(max_trials > 20 or max_trials <= 0):
+        raise ValueError(f"Max trials (value: {max_trials}) is too high or too low. Please provide a value greater than 0 and lower than 20.")
+
+    if(delay < 1 or delay > 60):
+        raise ValueError(f"delay (value: {delay} sec) is too high or too low. Please provide a value greater than 0 and lower than 60.")
+
     while (trial < max_trials):
         try:
-            result = requests.get(url)
-            if(result.status_code == 200):
+            response = requests.get(url)
+            if(response.status_code == 200):
+                print(f"Url '{url}' is reachable.")
                 return True
-        except Exception:
-            print(f"An exception occured when ping url '{url}'")
+        except requests.ConnectionError:
+            print(f"Url '{url}' is not reachable. Retry in {delay} second.")
             time.sleep(delay)
-        finally:
-            trial = trial+1
+            trial += 1
+        except requests.exceptions.MissingSchema:
+            print(f"Invalid Url format: {url}. Make sure the Url has a valid schema: (e.g., https:// or http://).")
+            return False
 
     return False
 
 
 def run():
     # Get action.yaml inputs from environment variables
-    url = os.environ['INPUT_URL']
-    delay = int(os.environ['INPUT_DELAY'])
-    max_trials = int(os.environ['INPUT_MAX_TRIALS'])
+    url = os.getenv('INPUT_URL')
+    delay = int(os.getenv('INPUT_DELAY'))
+    max_trials = int(os.getenv('INPUT_MAX_TRIALS'))
 
     # f allow to insert variable into a const string
     print(f"Start ping url '{url}' with max trials '{max_trials}' and a delay of '{delay}' between trials.")
 
-    result = ping_url(url, delay, max_trials)
+    succeed = ping_url(url, delay, max_trials)
 
-    if(result == False):
-        raise ValueError(f"Impossible to ping url '{url}' after {max_trials} trials!")
-    else:
-        print(f"url '{url}' pinged correctly.")
-
+    if(succeed == False):
+        raise Exception(f"Impossible to reach url '{url}' after {max_trials} trials.")
+    
+    print(f"Url {url} is reachable.")
+    
 
 if __name__ == "__main__":
     run()
