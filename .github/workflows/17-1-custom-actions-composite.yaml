@@ -34,8 +34,9 @@ jobs:
           working-dir: ${{ env.working-directory }}
           target-env: ${{ inputs.target-env }}
 
-      - name: Print setup deps output4
-        run: "Installed dependencies: ${{ steps.setup-deps.outputs.installed-deps }}"
+      - name: Print setup deps output
+        run: | 
+          echo "Installed dependencies: ${{ steps.setup-deps.outputs.installed-deps }}"
 
       - name: Test
         run: npm run test
