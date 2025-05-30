@@ -3,59 +3,86 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 const github = require('@actions/github');
  
+// ### REGEX ###
 const validateBranchName = ({ branchName }) =>
   /^[a-zA-Z0-9_\-\.\/]+$/.test(branchName);
 const validateDirectoryName = ({ dirName }) =>
   /^[a-zA-Z0-9_\-\/]+$/.test(dirName);
 
+// ### LOGS ###
 const addLog = (msg) =>
   `[js-dependency-update] : ${msg}`;
-const logInfo = (msg) =>
-  core.info(addLog(msg));
-const logError = (msg) =>
-  core.error(addLog(msg));
-const setFailed = (msg) =>
-  core.setFailed(addLog(msg));
+const setLogger = ({debug} = {debug: false}) => ({
+  debug: (message) => {
+    if(debug) {
+      core.info(`DEBUG: ${addLog(message)}`)
+      // can extained the logging to other logger
+    }
+  },
+  info: (message) => {
+    core.info(addLog(message));
+    // can extained the logging to other logger
+  },
+  error: (message) => {
+    core.error(addLog(message));
+    // can extained the logging to other logger
+  }
+});
 
+// ### GITS FUNCTIONS ###
+const setupGit = async () => {
+  await exec.exec(`git config --global user.name "gh-automation"`);
+  await exec.exec(`git config --global user.email "gh-automation@email.com"`);
+}
+
+// ### MAIN FUNCTION ###
 // Declare function where ou github action will be written
 // Please write an async function
 async function run() { 
-  logInfo('Start js-dependancy-update action');
+  // ###### debug and logger init ######
+  const debug = core.getBooleanInput('debug');
+  const logger = setLogger({ debug });
+  logger.info('Start js-dependancy-update action');
 
-  // base branch is mandatory
+  // ### INPUTS ###
+  // ###### base-branch ######
   const baseBranch = core.getInput('base-branch', { required: true });
   if(!validateBranchName(baseBranch)){
-    setFailed('Invalid base-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
+    core.setFailed('Invalid base-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
     return;
   }
 
-  // target branch is mandatory
-  const targetBranch = core.getInput('target-branch', { required: true });
-  if(!validateBranchName(targetBranch)){
-    setFailed('Invalid target-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
+  // ###### target-branch / head-branch ######
+  // IDEA: target-branch is used only in v1.
+	//       To avoid a v2, we can use a deprecated way:
+	//       This input continue to exists, but its value is overrided by headBranch if it is provided
+  const targetBranch = core.getInput('target-branch'/*, { required: true }*/);
+  // IDEA: head-branch is a new input (normaly v2).
+  //       But for compatibilities reason, we keep the old one (target-branch) and use it here if it is not defined
+  const headBranch = core.getInput('head-branch'/*, { required: true }*/) || targetBranch;
+  if(!validateBranchName(headBranch)){
+    core.setFailed('Invalid head-branch name. Branch names should include only characters, numbers, hyphens, underscores, dots, and forward slashes.');
     return;
   }
 
-  // working dir is mandatory
+  // ###### working-directory ######
   const workingDir = core.getInput('working-directory', { required: true });
   if(!validateDirectoryName(workingDir)){
-    setFailed('Invalid working directory name. Directory names should include only characters, numbers, hyphens, underscores, and forward slashes.');
+    core.setFailed('Invalid working directory name. Directory names should include only characters, numbers, hyphens, underscores, and forward slashes.');
     return;
   }
 
-  // gh token is mandatory
+  // ###### gh-token ######
   const ghToken = core.getInput('gh-token', { required: true });
   // make gh-token as a secret for security reason
   core.setSecret(ghToken);
 
-  // debug
-  const debug = core.getBooleanInput('debug');
+  // ### SHOW VARIABLES ###
+  logger.debug(`base branch is '${baseBranch}'`);
+  logger.debug(`head branch is '${headBranch}'`);
+  logger.debug(`working directory is '${workingDir}'`);
 
-  // Show variables
-  logInfo(`base branch is '${baseBranch}'`);
-  logInfo(`target branch is '${targetBranch}'`);
-  logInfo(`working directory is '${workingDir}'`);
-
+  // ### EXECUTION ###
   const commonExecOptions = {
     cwd: workingDir,
   };
@@ -66,6 +93,7 @@ async function run() {
   });
 
   // Check whether there are modified package*.json files
+  logger.info(`Checking for package updates`);
   const gitStatus = await exec.getExecOutput(
     'git status -s package*.json', [], {
       ...commonExecOptions
@@ -73,13 +101,13 @@ async function run() {
   );
 
   if(gitStatus.stdout.length > 0){
-    logInfo('There are updates available!');
+    logger.info('There are updates available!');
 
     // Mandatory or we cannot commit our modifications
-    await exec.exec(`git config --global user.name "gh-automation"`);
-    await exec.exec(`git config --global user.email "gh-automation@email.com"`);
+    logger.debug('Init git commit on package*.json');
+    await setupGit();
 
-    await exec.exec(`git checkout -b ${targetBranch}`, [], {
+    await exec.exec(`git checkout -b ${headBranch}`, [], {
       ...commonExecOptions
     });
 
@@ -94,29 +122,32 @@ async function run() {
     });
 
     // "--force" allow to force push on a already existing branch
-    await exec.exec(`git push -u origin ${targetBranch} --force`, [], {
+    logger.debug(`Push commit to branch ${headBranch}`);
+    await exec.exec(`git push -u origin ${headBranch} --force`, [], {
       ...commonExecOptions
     });
 
+    logger.debug(`Fetching octokit API`);
     const octokit = github.getOctokit(ghToken);
 
     try {
       // create pull request from rest api.
+      logger.debug(`Creating PR to branch ${headBranch}`);
       await octokit.rest.pulls.create({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         title: `Update NPM dependencies`,
         body: `This pull request updates NPM packages`,
         base: baseBranch,
-        head: targetBranch 
+        head: headBranch 
       });
     } catch (e) {
-      logError('Something went wrong while creating the PR. Check logs below.');
-      setFailed(e.message);
-      logError(e);
+      logger.error('Something went wrong while creating the PR. Check logs below.');
+      core.setFailed(e.message);
+      logger.error(e);
     }
   } else {
-    logInfo('No updates at this point in time.');
+    logger.info('No updates at this point in time.');
   }
 }
 

@@ -14,8 +14,8 @@ on:
         type: string
         required: false
         default: main
-      target-branch:
-        description: target branch
+      head-branch:
+        description: head branch targeted
         type: string
         required: false
         default: update-dependencies
@@ -43,7 +43,7 @@ jobs:
         uses: ./.github/actions/js-dependency-update
         with:
           base-branch: ${{ inputs.base-branch }}
-          target-branch: ${{ inputs.target-branch }}
+          head-branch: ${{ inputs.head-branch }}
           working-directory: ${{ inputs.working-directory }}
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           debug:  ${{ inputs.debug }}
