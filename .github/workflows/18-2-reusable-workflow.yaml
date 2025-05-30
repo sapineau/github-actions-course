@@ -8,7 +8,7 @@ jobs:
     # Use full path
     uses: './.github/workflows/18-1-reusable-workflows.yaml'
     with:
-      target-directory: '.'
+      target-directory: '/app/my-app'
 
   print-outputs:
     runs-on: ubuntu-latest
