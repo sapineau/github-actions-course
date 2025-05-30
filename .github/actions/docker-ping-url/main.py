@@ -21,8 +21,8 @@ def ping_url(url, delay, max_trials):
 def run():
     # Get action.yaml inputs from environment variables
     url = os.environ['INPUT_URL']
-    delay = os.environ['INPUT_DELAY']
-    max_trials = os.environ['INPUT_MAX_TRIALS']
+    delay = int(os.environ['INPUT_DELAY'])
+    max_trials = int(os.environ['INPUT_MAX_TRIALS'])
 
     print("Start ping url '{url}' with max trials '{max_trials}' and a delay of '{delay}' between trials.")
 
