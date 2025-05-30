@@ -24,12 +24,13 @@ def run():
     delay = int(os.environ['INPUT_DELAY'])
     max_trials = int(os.environ['INPUT_MAX_TRIALS'])
 
-    print("Start ping url '{url}' with max trials '{max_trials}' and a delay of '{delay}' between trials.")
+    # f allow to insert variable into a const string
+    print(f"Start ping url '{url}' with max trials '{max_trials}' and a delay of '{delay}' between trials.")
 
     result = ping_url(url, delay, max_trials)
 
     if(result == False):
-        raise ValueError("Impossible to ping url '{url}' after {max_trials} trials!")
+        raise ValueError(f"Impossible to ping url '{url}' after {max_trials} trials!")
 
 
 if __name__ == "__main__":
