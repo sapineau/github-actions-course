@@ -7,14 +7,16 @@ def ping_url(url, delay, max_trials):
     trial = 0
 
     while (trial < max_trials):
-        result = requests.get(url)
-
-        if(result.status_code == 200):
-            return True
-        else:
+        try:
+            result = requests.get(url)
+            if(result.status_code == 200):
+                return True
+        except Exception:
+            print(f"An exception occured when ping url '{url}'")
             time.sleep(delay)
+        finally:
             trial = trial+1
-    
+
     return False
 
 
