@@ -1,5 +1,5 @@
 name: 17 - 2 - Custom Actions - JS
-run-name: "17 - 2 - Custom Actions - JS - Base branch '${{ inputs.base-branch }}' - Target branch '${{ inputs.target-branch }}' - Work dir '${{ inputs.working-directory }}'"
+run-name: "17 - 2 - Custom Actions - JS - Base branch '${{ inputs.base-branch }}' - Target branch '${{ inputs.head-branch }}' - Work dir '${{ inputs.working-directory }}'"
 
 # Add permissions to write contents and pull-requests
 permissions:
