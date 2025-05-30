@@ -43,6 +43,10 @@ def run():
     if(succeed == False):
         raise Exception(f"Impossible to reach url '{url}' after {max_trials} trials.")
     
+    # write outputs
+    outputFile = open('GITHUB_OUTPUT', 'a')
+    print(f'url-reachable={succeed}', file=outputFile)
+
     print(f"Url '{url}' is reachable.")
     
 

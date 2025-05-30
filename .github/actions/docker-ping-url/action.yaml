@@ -13,6 +13,11 @@ inputs:
     description: Delay in seconds between trials
     default: '5'
 
+outputs:
+  url-reachable:  
+    description: Whether the URL is reachable
+    # The value is define in docker code
+
 runs:
   using: docker
   # Defines which file image to use. 
