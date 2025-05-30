@@ -39,13 +39,13 @@ def run():
     print(f"Start ping url '{url}' with max trials '{max_trials}' and a delay of '{delay}' between trials.")
 
     succeed = ping_url(url, delay, max_trials)
+    
+    # write outputs
+    outputFile = open(os.getenv('GITHUB_OUTPUT'), 'a')
+    print(f'url-reachable={succeed}', file=outputFile)
 
     if(succeed == False):
         raise Exception(f"Impossible to reach url '{url}' after {max_trials} trials.")
-    
-    # write outputs
-    outputFile = open('GITHUB_OUTPUT', 'a')
-    print(f'url-reachable={succeed}', file=outputFile)
 
     print(f"Url '{url}' is reachable.")
     

@@ -35,5 +35,6 @@ jobs:
           delay: ${{ inputs.delay }}
 
       - name: Print output from ping url
+        if: always()
         run: |
           echo "URL reachable: ${{ steps.ping-url.outputs.url-reachable }}"
